@@ -4,11 +4,12 @@ const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
-    me: async (parent, args, { user }) => {
-      if (user) {
-        const params = await User.findOne({ _id: user._id }).select(
+    me: async (parent, args, context) => {
+      if (context.user) {
+        const params = await User.findOne({ _id: context.user._id }).select(
           "-__v -password"
         );
+
         return params;
       }
       throw new AuthenticationError("You are not logged in...");
@@ -37,10 +38,10 @@ const resolvers = {
       return { user, token };
     },
 
-    saveBook: async (parent, { bookData }, { user }) => {
-      if (user) {
+    saveBook: async (parent, { bookData }, context) => {
+      if (context.user) {
         const updateUserBooks = await User.findOneAndUpdate(
-          { _id: user._id },
+          { _id: context.user._id },
           { $push: { savedBooks: bookData } },
           { new: true }
         );
@@ -50,10 +51,10 @@ const resolvers = {
         "You must be signed in to change this content..."
       );
     },
-    removeBook: async (parent, { bookId }, { user }) => {
-      if (user) {
+    removeBook: async (parent, { bookId }, context) => {
+      if (context.user) {
         const removeUserBook = await User.findOneAndUpdate(
-          { _id: user._id },
+          { _id: context.user._id },
           { $pull: { savedBooks: { bookId } } },
           { new: true }
         );

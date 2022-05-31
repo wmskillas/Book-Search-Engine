@@ -23,7 +23,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(_dirname, "../client/build/index.html"));
+  res.sendFile(path.join(__dirname, "../client/"));
+  console.log(__dirname);
 });
 const startApolloServer = async (typeDefs, resolvers) => {
   await server.start();
